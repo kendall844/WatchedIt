@@ -18,7 +18,19 @@ const getOneShow = async (req, res) => {
     }
 };
 
+const createShow = async (req, res) => {
+    try{
+        const {title, type, rating, review} = req.body;
+        const newShow = await model.addShow(title, type, rating, review);
+        res.json(newShow);
+    } catch (err){
+        res.status(500).json({ error: err.message});
+    }
+};
+
+
 module.exports = {
     getShows,
-    getOneShow
+    getOneShow,
+    createShow
 };

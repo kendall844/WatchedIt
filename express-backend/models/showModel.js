@@ -15,7 +15,17 @@ async function getOneShowById(id) {
     return result.rows[0];
 }
 
+async function addShow(title, type, rating, review) {
+    const queryText = ` INSERT INTO shows (title, type, rating, review)
+    VALUES ($1, $2, $3, $4) RETURNING *;`;
+
+    const values = [title, type, rating, review];
+    const result = await pool.query(queryText, values);
+    return result.rows[0];
+}
+
 module.exports = {
     getAllShows,
-    getOneShowById
+    getOneShowById,
+    addShow
 };
