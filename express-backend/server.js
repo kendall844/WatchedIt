@@ -8,6 +8,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
+const showRoutes = require('./routes/showRoutes');
+
+app.use('/api/shows', showRoutes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
     console.log("Server listening on port: " + PORT + "!");
