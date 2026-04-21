@@ -28,9 +28,19 @@ const createShow = async (req, res) => {
     }
 };
 
+const getShowsByType = async (req, res0) => {
+    try{
+        const shows = await model.getShowsByType(req.params.type);
+        res.json(shows);
+    }catch (err){
+        res.status(500).json({error: err.message});
+    }
+};
+
 
 module.exports = {
     getShows,
     getOneShow,
-    createShow
+    createShow,
+    getShowsByType
 };

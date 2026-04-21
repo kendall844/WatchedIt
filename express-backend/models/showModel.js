@@ -24,8 +24,16 @@ async function addShow(title, type, rating, review) {
     return result.rows[0];
 }
 
+async function getShowsByType(type){
+    const queryText = "SELECT * FROM shows WHERE type = $1";
+    const values = [type];
+    const result = await pool.query(queryText, values);
+    return result.rows;
+}
+
 module.exports = {
     getAllShows,
     getOneShowById,
-    addShow
+    addShow,
+    getShowsByType
 };
