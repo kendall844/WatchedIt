@@ -1,22 +1,27 @@
-import axios from 'axios';
+import axios from "axios";
 
-const SHOWS_API_BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 class ShowService {
-    getShows(){
-        return axios.get(SHOWS_API_BASE_URL + "/");
+
+    getShows() {
+        return axios.get(BASE_URL);
     }
 
-    getOneShow() {
-        return axios.get(`${SHOWS_API_BASE_URL}/${id}`);
+    getOneShow(id) {
+        return axios.get(`${BASE_URL}/${id}`);
     }
 
-    createShow(){
-        return axios.post(SHOWS_API_BASE_URL + "/", show)
+    getShowsByType(type) {
+        return axios.get(`${BASE_URL}/type/${type}`);
     }
 
-    getShowByType(){
-        return axios.get(`${SHOWS_API_BASE_URL}/type/${type}`);
+    createShow(show) {
+        return axios.post(BASE_URL, show);
+    }
+
+    deleteShow(id) {
+        return axios.delete(`${BASE_URL}/${id}`);
     }
 }
 

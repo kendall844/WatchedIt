@@ -11,7 +11,7 @@ const getShows = async (req, res) => {
 
 const getOneShow = async (req, res) => {
     try{
-        const show = await model.getOneShowById();
+        const show = await model.getOneShowById(req.params.id);
         res.json(show);
     }catch (err){
         res.status(500).json({error: err.message});
@@ -28,7 +28,7 @@ const createShow = async (req, res) => {
     }
 };
 
-const getShowsByType = async (req, res0) => {
+const getShowsByType = async (req, res) => {
     try{
         const shows = await model.getShowsByType(req.params.type);
         res.json(shows);

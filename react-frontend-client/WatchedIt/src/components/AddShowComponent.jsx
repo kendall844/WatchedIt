@@ -12,8 +12,12 @@ const AddShowComponent = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newShow = { title, rating, type, review };
+        const newShow = { title, rating: Number(rating), type, review };
         ShowService.createShow(newShow).then(() => {
+            setTitle('');
+            setRating('');
+            setType('');
+            setReview('');
             navigate('/');
         });
     };
@@ -32,8 +36,8 @@ const AddShowComponent = () => {
                 </div>
                 <div className="form-section">
                     <label>Rating:</label>
-                    <input type="number" className="handle-form"
-                        value={rating} onChange={(e) => setRating(e.target.value)} required />
+                    <input type="number" min="0" max="10" step="0.1" className="handle-form"
+                        value={rating} onChange={(e) => setRating(Number(e.target.value))} required />
                 </div>
                 <div className="form-section">
                     <label>Type:</label>
