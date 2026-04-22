@@ -6,16 +6,22 @@ const ShowListComponent = () => {
     const { type } = useParams();
     const [shows, setShows] = useState([]);
 
+    const getPageTitle = () => {
+        if (!type) return 'All Shows';
+        if (type === 'TV Show') return 'TV Shows';
+        if (type === 'Movie') return 'Movies';
+        return type;
+    };
+
     useEffect(() => {
         if (type) {
-            ShowService.getShowByType(type).then((res) => {
-                setShows(res.data);
-                document.title = `Shows - ${type}`;
+            ShowService.getShowsByType(type).then((res) => {
+                setShows(Array.isArray(res.data) ? res.data : []);
+                document.title = getPageTitle();
             });
         } else {
             ShowService.getShows().then((res) => {
-                console.log("API URL:", import.meta.env.VITE_API_URL);
-                setShows(res.data);
+                setShows(Array.isArray(res.data) ? res.data : []);
                 document.title = 'All Shows';
             });
         }
@@ -25,14 +31,9 @@ const ShowListComponent = () => {
         <div>
 
             <h2 className="text-center">
-                {type ? `${type} Shows` : 'All Shows'}
+                {getPageTitle()}
             </h2>
 
-            <div className="row">
-                <Link to="/add" className="btn btn-primary">
-                    Add Show
-                </Link>
-            </div>
 
             <main className="items-container">
 
@@ -62,7 +63,16 @@ const ShowListComponent = () => {
                     ))
                 )}
 
+
+
             </main>
+            {type && (
+                <div className="row">
+                    <Link to="/" className="btn btn-secondary">
+                        Back to All Shows</Link>
+                </div>
+            )}
+
         </div>
     );
 };
