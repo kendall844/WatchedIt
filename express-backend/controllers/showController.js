@@ -1,40 +1,42 @@
 const model = require("../models/showModel");
 
-const getShows = async (req, res) => {
-    try {
-        const shows = await model.getAllShows();
-        res.json(shows);
-    }catch (err){
-        res.status(500).json({error: err.message});
-    }
+exports.createShow = async (req, res) => {
+    const userId = req.user.id;
+    const newShow = await db.query(
+        "INSERT INTO shows (title, type, status, user_id) VALUES (?, ?, ?, ?)",
+        [req.body.title, req.body.type, req.body.status, userId]
+    );
+    res.json(newShow);
 };
 
-const getOneShow = async (req, res) => {
-    try{
-        const show = await model.getOneShowById(req.params.id);
-        res.json(show);
-    }catch (err){
-        res.status(500).json({error: err.message});
-    }
+exports.getShows = async (req, res) => {
+    const userId = req.user.id;
+
+    const shows = await db.query(
+        "SELECT * FROM shows WHERE user_id = ?",
+        [userId]
+    );
+    res.json(shows);
 };
 
-const createShow = async (req, res) => {
-    try{
-        const {title, type, rating, review} = req.body;
-        const newShow = await model.addShow(title, type, rating, review);
-        res.json(newShow);
-    } catch (err){
-        res.status(500).json({ error: err.message});
-    }
+exports.getOneShow = async (req, res) => {
+    const userId = req.user.id;
+
+    const show = await db.query(
+        "SELECT * FROM shows WHERE id = ? AND user_id = ?",
+        [req.params.id, userId]
+    );
+    res.json(show[0]);
 };
 
-const getShowsByType = async (req, res) => {
-    try{
-        const shows = await model.getShowsByType(req.params.type);
-        res.json(shows);
-    }catch (err){
-        res.status(500).json({error: err.message});
-    }
+exports.getShowsByType = async (req, res) => {
+   const userId = req.user.id;
+
+   const shows = await db.query(
+    "SELECT * FROM shows WHERE type = ? AND user_id = ?",
+    [req.params.type, userId]
+   );
+   res.json(shows);
 };
 
 
