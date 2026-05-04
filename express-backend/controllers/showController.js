@@ -1,48 +1,32 @@
 const model = require("../models/showModel");
 
-exports.createShow = async (req, res) => {
+async function createShow(req, res) {
     const userId = req.user.id;
-    const newShow = await db.query(
-        "INSERT INTO shows (title, type, status, user_id) VALUES (?, ?, ?, ?)",
-        [req.body.title, req.body.type, req.body.status, userId]
-    );
+    const newShow = await model.createShow(req.body, userId);
     res.json(newShow);
-};
+}
 
-exports.getShows = async (req, res) => {
+async function getShows(req, res) {
     const userId = req.user.id;
-
-    const shows = await db.query(
-        "SELECT * FROM shows WHERE user_id = ?",
-        [userId]
-    );
+    const shows = await model.getShows(userId);
     res.json(shows);
-};
+}
 
-exports.getOneShow = async (req, res) => {
+async function getOneShow(req, res) {
     const userId = req.user.id;
+    const show = await model.getOneShow(req.params.id, userId);
+    res.json(show);
+}
 
-    const show = await db.query(
-        "SELECT * FROM shows WHERE id = ? AND user_id = ?",
-        [req.params.id, userId]
-    );
-    res.json(show[0]);
-};
-
-exports.getShowsByType = async (req, res) => {
-   const userId = req.user.id;
-
-   const shows = await db.query(
-    "SELECT * FROM shows WHERE type = ? AND user_id = ?",
-    [req.params.type, userId]
-   );
-   res.json(shows);
-};
-
+async function getShowsByType(req, res) {
+    const userId = req.user.id;
+    const shows = await model.getShowsByType(req.params.type, userId);
+    res.json(shows);
+}
 
 module.exports = {
+    createShow,
     getShows,
     getOneShow,
-    createShow,
     getShowsByType
 };

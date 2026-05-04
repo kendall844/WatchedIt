@@ -3,16 +3,33 @@ const express = require("express");
 const app = express();
 const multer = require("multer");
 const cors = require("cors");
+const session = require("express-session");
+const passport = require("passport");
+require("./config/passport");
 
-app.use(cors());
+const showRoutes = require('./routes/showRoutes');
+const authRoutes = require("./routes/authRoutes");
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(multer().none());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-const showRoutes = require('./routes/showRoutes');
+app.use(session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: false
+}));
 
-app.use('/api/shows', showRoutes);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/auth", authRoutes);
+app.use("/api/shows", showRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {

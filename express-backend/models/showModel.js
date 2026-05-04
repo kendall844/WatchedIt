@@ -1,39 +1,37 @@
+const model = require("../models/showModel");
 
-const pool = require('./dbConnection');
-
-async function getAllShows() {
-    const queryText = "SELECT * FROM shows";
-    const result = await pool.query(queryText);
-    return result.rows;
-    
+async function getShows(req, res) {
+    const shows = await model.getAllShows(req.user.id);
+    res.json(shows);
 }
 
-async function getOneShowById(id) {
-    const queryText = "SELECT * FROM shows WHERE id = $1";
-    const values = [id];
-    const result = await pool.query(queryText, values);
-    return result.rows[0];
+async function getOneShow(req, res) {
+    const show = await model.getOneShowById(req.params.id, req.user.id);
+    res.json(show);
 }
 
-async function addShow(title, type, rating, review) {
-    const queryText = ` INSERT INTO shows (title, type, rating, review)
-    VALUES ($1, $2, $3, $4) RETURNING *;`;
+async function createShow(req, res) {
+    const { title, type, rating, review } = req.body;
 
-    const values = [title, type, rating, review];
-    const result = await pool.query(queryText, values);
-    return result.rows[0];
+    const newShow = await model.addShow(
+        title,
+        type,
+        rating,
+        review,
+        req.user.id
+    );
+
+    res.json(newShow);
 }
 
-async function getShowsByType(type){
-    const queryText = "SELECT * FROM shows WHERE type = $1";
-    const values = [type];
-    const result = await pool.query(queryText, values);
-    return result.rows;
+async function getShowsByType(req, res) {
+    const shows = await model.getShowsByType(req.params.type, req.user.id);
+    res.json(shows);
 }
 
 module.exports = {
-    getAllShows,
-    getOneShowById,
-    addShow,
+    getShows,
+    getOneShow,
+    createShow,
     getShowsByType
 };
