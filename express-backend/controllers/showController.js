@@ -1,32 +1,41 @@
 const model = require("../models/showModel");
+const tmdb = require("../services/tmdbService");
 
-async function createShow(req, res) {
-    const userId = req.user.id;
-    const newShow = await model.createShow(req.body, userId);
-    res.json(newShow);
-}
-
-async function getShows(req, res) {
-    const userId = req.user.id;
-    const shows = await model.getShows(userId);
+const getShows = async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const shows = await model.getAllShows(req.user.id);
     res.json(shows);
-}
+};
 
-async function getOneShow(req, res) {
-    const userId = req.user.id;
-    const show = await model.getOneShow(req.params.id, userId);
+const createShow = async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    const { title, type, review } = req.body;
+
+    const tmdbData = await tmdb.searchOne(title, type) || {};
+
+    const show = await model.addShow(
+        title,
+        type,
+        tmdbData.vote_average || null,
+        review,
+        req.user.id,
+        tmdbData.poster_path || null,
+        tmdbData.overview || null
+    );
+
     res.json(show);
-}
+};
 
-async function getShowsByType(req, res) {
-    const userId = req.user.id;
-    const shows = await model.getShowsByType(req.params.type, userId);
-    res.json(shows);
-}
+const deleteShow = async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+
+    await model.deleteShow(req.params.id, req.user.id);
+    res.json({ success: true });
+};
 
 module.exports = {
-    createShow,
     getShows,
-    getOneShow,
-    getShowsByType
+    createShow,
+    deleteShow
 };

@@ -1,37 +1,32 @@
-const model = require("../models/showModel");
+const db = require("./dbConnection");
 
-async function getShows(req, res) {
-    const shows = await model.getAllShows(req.user.id);
-    res.json(shows);
-}
-
-async function getOneShow(req, res) {
-    const show = await model.getOneShowById(req.params.id, req.user.id);
-    res.json(show);
-}
-
-async function createShow(req, res) {
-    const { title, type, rating, review } = req.body;
-
-    const newShow = await model.addShow(
-        title,
-        type,
-        rating,
-        review,
-        req.user.id
+async function getAllShows(userId) {
+    const result = await db.query(
+        "SELECT * FROM shows WHERE user_id = $1 ORDER BY id DESC",
+        [userId]
     );
-
-    res.json(newShow);
+    return result.rows;
 }
 
-async function getShowsByType(req, res) {
-    const shows = await model.getShowsByType(req.params.type, req.user.id);
-    res.json(shows);
+async function addShow(title, type, rating, review, userId, poster, overview) {
+    const result = await db.query(
+        `INSERT INTO shows (title, type, rating, review, user_id, poster_path, overview)
+     VALUES ($1,$2,$3,$4,$5,$6,$7)
+     RETURNING *`,
+        [title, type, rating, review, userId, poster, overview]
+    );
+    return result.rows[0];
+}
+
+async function deleteShow(id, userId) {
+    await db.query(
+        "DELETE FROM shows WHERE id = $1 AND user_id = $2",
+        [id, userId]
+    );
 }
 
 module.exports = {
-    getShows,
-    getOneShow,
-    createShow,
-    getShowsByType
+    getAllShows,
+    addShow,
+    deleteShow
 };

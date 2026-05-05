@@ -2,19 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const controller = require("../controllers/showController");
+const requireAuth = require("../config/requireAuth");
 
-function requireAuth(req, res, next) {
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: "Not authenticated" });
-    }
-    next();
-}
-
-router.use(requireAuth);
-
-router.get("/type/:type", controller.getShowsByType);
-router.get("/:id", controller.getOneShow);
-router.get("/", controller.getShows);
-router.post("/", controller.createShow);
+router.get("/", requireAuth, controller.getShows);
+router.post("/", requireAuth, controller.createShow);
+router.delete("/:id", requireAuth, controller.deleteShow);
 
 module.exports = router;
